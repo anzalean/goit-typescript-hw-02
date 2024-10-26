@@ -9,16 +9,22 @@ import ImageModal from './components/ImageModal/ImageModal';
 import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import './App.css';
 
+interface Image {
+  id: string;
+  urls: { small: string; regular: string };
+  alt_description: string;
+}
+
 const API_KEY = 'ye7kVTR19_tS-WCYUhRAMP2lorX6vRBV4jnQlZkyZpU';
 
 const App = () => {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [modalImage, setModalImage] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [images, setImages] = useState<Image[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [modalImage, setModalImage] = useState<Image | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!query) return;
@@ -28,11 +34,11 @@ const App = () => {
       setError(null);
 
       try {
-        const response = await axios.get(
+        const response = await axios.get<{ results: Image[] }>(
           `https://api.unsplash.com/search/photos?query=${query}&page=${page}&per_page=12&client_id=${API_KEY}`
         );
         setImages((prevImages) => [...prevImages, ...response.data.results]);
-      } catch  {
+      } catch {
         setError('Something went wrong. Please try again.');
       } finally {
         setLoading(false);
@@ -42,7 +48,7 @@ const App = () => {
     fetchImages();
   }, [query, page]);
 
-  const handleSearchSubmit = (searchQuery) => {
+  const handleSearchSubmit = (searchQuery: string) => {
     if (searchQuery.trim() === '') {
       toast.error('Please enter a search term.');
       return;
@@ -52,7 +58,7 @@ const App = () => {
     setPage(1);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: Image) => {
     setModalImage(image);
     setShowModal(true);
   };
@@ -80,3 +86,4 @@ const App = () => {
 };
 
 export default App;
+export type { Image };

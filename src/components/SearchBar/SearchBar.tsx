@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import styles from './SearchBar.module.css';
 import { IoIosSearch } from "react-icons/io";
 
-const SearchBar = ({ onSubmit }) => {
-  const [search, setSearch] = useState('');
+interface SearchBarProps {
+  onSubmit: (query: string) => void;
+}
 
-  const handleSubmit = (e) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
+  const [search, setSearch] = useState<string>('');
+
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit(search);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
   };
 
   return (
@@ -17,7 +25,7 @@ const SearchBar = ({ onSubmit }) => {
           type="text"
           className={styles.input}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleChange}
           placeholder="Search images and photos"
         />
         <button type="submit" className={styles.button}>
